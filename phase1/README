@@ -1,5 +1,0 @@
-
-javac *.java
-
-
-java phase1.JottTokenizerTester
