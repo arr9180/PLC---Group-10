@@ -2,7 +2,7 @@ package phase2.nodes;
 
 import phase2.JottTree;
 
-public class NumberNode implements JottTree {
+public class FunctionParameterNode implements JottTree {
 
     @Override
     public String convertToJott() {
