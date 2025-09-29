@@ -1,36 +1,67 @@
 package phase2.nodes;
 
-import phase2.JottTree;
+import java.util.ArrayList;
 
-public class IdNode implements JottTree {
+import phase2.Token;
+import phase2.TokenType;
+
+public class IdNode implements OperandNode {
+
+    private final Token idToken;
+
+    private IdNode(Token idToken) {
+        this.idToken = idToken;
+    }
+
+    public static IdNode parseIDNode(ArrayList<Token> tokens) {
+        if (tokens == null || tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected identifier but reached end of input");
+            return null;
+        }
+
+        Token next = tokens.get(0);
+        if (next.getTokenType() != TokenType.ID_KEYWORD) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected identifier but found \"" + next.getToken() + "\"");
+            System.err.println(next.getFilename() + ":" + next.getLineNum());
+            return null;
+        }
+
+        String lexeme = next.getToken();
+        if (lexeme.isEmpty() || !Character.isLowerCase(lexeme.charAt(0))) {
+            System.err.println("Syntax Error");
+            System.err.println("Invalid identifier \"" + lexeme + "\". Identifiers must start with a lowercase letter");
+            System.err.println(next.getFilename() + ":" + next.getLineNum());
+            return null;
+        }
+
+        tokens.remove(0);
+        return new IdNode(next);
+    }
 
     @Override
     public String convertToJott() {
-        // TODO Phase 2
-        return "";
+        return idToken.getToken();
     }
 
     @Override
     public String convertToJava(String className) {
-        // TODO Phase 2
-        return "";
+        return idToken.getToken();
     }
 
     @Override
     public String convertToC() {
-        // TODO Phase 2
-        return "";
+        return idToken.getToken();
     }
 
     @Override
     public String convertToPython() {
-        // TODO Phase 2
-        return "";
+        return idToken.getToken();
     }
 
     @Override
     public boolean validateTree() {
-        // TODO Phase 2
-        return false;
+        return true;
     }
 }

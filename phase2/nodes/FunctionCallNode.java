@@ -1,36 +1,160 @@
 package phase2.nodes;
 
-import phase2.JottTree;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FunctionCallNode implements JottTree {
+import phase2.Token;
+import phase2.TokenType;
+
+public class FunctionCallNode implements OperandNode {
+
+    private final Token functionNameToken;
+    private final List<OperandNode> arguments;
+
+    private FunctionCallNode(Token functionNameToken, List<OperandNode> arguments) {
+        this.functionNameToken = functionNameToken;
+        this.arguments = arguments;
+    }
+
+    public static FunctionCallNode parseFunctionCallNode(ArrayList<Token> tokens) {
+        if (tokens == null || tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected function call but reached end of input");
+            return null;
+        }
+
+        Token header = tokens.get(0);
+        if (header.getTokenType() != TokenType.FC_HEADER) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected function call header '::' but found \"" + header.getToken() + "\"");
+            System.err.println(header.getFilename() + ":" + header.getLineNum());
+            return null;
+        }
+        tokens.remove(0);
+
+        if (tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected function name after '::' but reached end of input");
+            return null;
+        }
+
+        Token nameToken = tokens.get(0);
+        if (nameToken.getTokenType() != TokenType.ID_KEYWORD) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected function name but found \"" + nameToken.getToken() + "\"");
+            System.err.println(nameToken.getFilename() + ":" + nameToken.getLineNum());
+            return null;
+        }
+
+        String nameLexeme = nameToken.getToken();
+        if (nameLexeme.isEmpty() || !Character.isLowerCase(nameLexeme.charAt(0))) {
+            System.err.println("Syntax Error");
+            System.err.println("Invalid function name \"" + nameLexeme + "\". Names must start with a lowercase letter");
+            System.err.println(nameToken.getFilename() + ":" + nameToken.getLineNum());
+            return null;
+        }
+        tokens.remove(0);
+
+        if (tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected '[' after function name but reached end of input");
+            return null;
+        }
+
+        Token bracketToken = tokens.get(0);
+        if (bracketToken.getTokenType() != TokenType.L_BRACKET) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected '[' after function name but found \"" + bracketToken.getToken() + "\"");
+            System.err.println(bracketToken.getFilename() + ":" + bracketToken.getLineNum());
+            return null;
+        }
+        tokens.remove(0);
+
+        List<OperandNode> args = new ArrayList<>();
+
+        if (tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected ']' to close function call but reached end of input");
+            return null;
+        }
+
+        if (tokens.get(0).getTokenType() != TokenType.R_BRACKET) {
+            while (true) {
+                OperandNode operand = OperandNode.parseOperand(tokens);
+                if (operand == null) {
+                    return null;
+                }
+                args.add(operand);
+
+                if (tokens.isEmpty()) {
+                    System.err.println("Syntax Error");
+                    System.err.println("Expected ',' or ']' after function argument but reached end of input");
+                    return null;
+                }
+
+                Token separator = tokens.get(0);
+                if (separator.getTokenType() == TokenType.COMMA) {
+                    tokens.remove(0);
+                    if (tokens.isEmpty()) {
+                        System.err.println("Syntax Error");
+                        System.err.println("Expected operand after ',' in function call");
+                        return null;
+                    }
+                    continue;
+                }
+
+                if (separator.getTokenType() == TokenType.R_BRACKET) {
+                    break;
+                }
+
+                System.err.println("Syntax Error");
+                System.err.println("Expected ',' or ']' after function argument but found \"" + separator.getToken() + "\"");
+                System.err.println(separator.getFilename() + ":" + separator.getLineNum());
+                return null;
+            }
+        }
+
+        tokens.remove(0);
+
+        return new FunctionCallNode(nameToken, args);
+    }
 
     @Override
     public String convertToJott() {
-        // TODO Phase 2
-        return "";
+        StringBuilder builder = new StringBuilder();
+        builder.append("::").append(functionNameToken.getToken()).append("[");
+        for (int i = 0; i < arguments.size(); i++) {
+            if (i > 0) {
+                builder.append(",");
+            }
+            builder.append(arguments.get(i).convertToJott());
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
     @Override
     public String convertToJava(String className) {
-        // TODO Phase 2
-        return "";
+        return convertToJott();
     }
 
     @Override
     public String convertToC() {
-        // TODO Phase 2
-        return "";
+        return convertToJott();
     }
 
     @Override
     public String convertToPython() {
-        // TODO Phase 2
-        return "";
+        return convertToJott();
     }
 
     @Override
     public boolean validateTree() {
-        // TODO Phase 2
-        return false;
+        for (OperandNode argument : arguments) {
+            if (!argument.validateTree()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
