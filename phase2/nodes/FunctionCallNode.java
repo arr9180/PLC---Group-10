@@ -9,9 +9,9 @@ import phase2.TokenType;
 public class FunctionCallNode implements OperandNode {
 
     private final Token functionNameToken;
-    private final List<OperandNode> arguments;
+    private final List<ExpressionNode> arguments;
 
-    private FunctionCallNode(Token functionNameToken, List<OperandNode> arguments) {
+    private FunctionCallNode(Token functionNameToken, List<ExpressionNode> arguments) {
         this.functionNameToken = functionNameToken;
         this.arguments = arguments;
     }
@@ -70,7 +70,7 @@ public class FunctionCallNode implements OperandNode {
         }
         tokens.remove(0);
 
-        List<OperandNode> args = new ArrayList<>();
+        List<ExpressionNode> args = new ArrayList<>();
 
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
@@ -80,11 +80,11 @@ public class FunctionCallNode implements OperandNode {
 
         if (tokens.get(0).getTokenType() != TokenType.R_BRACKET) {
             while (true) {
-                OperandNode operand = OperandNode.parseOperand(tokens);
-                if (operand == null) {
+                ExpressionNode expression = ExpressionNode.parse(tokens);
+                if (expression == null) {
                     return null;
                 }
-                args.add(operand);
+                args.add(expression);
 
                 if (tokens.isEmpty()) {
                     System.err.println("Syntax Error");
@@ -119,6 +119,10 @@ public class FunctionCallNode implements OperandNode {
         return new FunctionCallNode(nameToken, args);
     }
 
+    public Token getFunctionNameToken() {
+        return functionNameToken;
+    }
+
     @Override
     public String convertToJott() {
         StringBuilder builder = new StringBuilder();
@@ -150,7 +154,7 @@ public class FunctionCallNode implements OperandNode {
 
     @Override
     public boolean validateTree() {
-        for (OperandNode argument : arguments) {
+        for (ExpressionNode argument : arguments) {
             if (!argument.validateTree()) {
                 return false;
             }

@@ -1,36 +1,61 @@
 package phase2.nodes;
 
-import phase2.JottTree;
+import java.util.ArrayList;
 
-public class BooleanNode implements JottTree {
+import phase2.Token;
+import phase2.TokenType;
+
+public class BooleanNode implements OperandNode {
+
+    private final Token booleanToken;
+
+    private BooleanNode(Token booleanToken) {
+        this.booleanToken = booleanToken;
+    }
+
+    public static BooleanNode parse(ArrayList<Token> tokens) {
+        if (tokens.isEmpty()) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected boolean literal but reached end of input");
+            return null;
+        }
+        Token token = tokens.get(0);
+        if (token.getTokenType() != TokenType.ID_KEYWORD || !isBooleanLiteral(token.getToken())) {
+            System.err.println("Syntax Error");
+            System.err.println("Expected boolean literal but found \"" + token.getToken() + "\"");
+            System.err.println(token.getFilename() + ":" + token.getLineNum());
+            return null;
+        }
+        tokens.remove(0);
+        return new BooleanNode(token);
+    }
+
+    static boolean isBooleanLiteral(String text) {
+        return "True".equals(text) || "False".equals(text);
+    }
 
     @Override
     public String convertToJott() {
-        // TODO Phase 2
-        return "";
+        return booleanToken.getToken();
     }
 
     @Override
     public String convertToJava(String className) {
-        // TODO Phase 2
         return "";
     }
 
     @Override
     public String convertToC() {
-        // TODO Phase 2
         return "";
     }
 
     @Override
     public String convertToPython() {
-        // TODO Phase 2
         return "";
     }
 
     @Override
     public boolean validateTree() {
-        // TODO Phase 2
-        return false;
+        return true;
     }
 }

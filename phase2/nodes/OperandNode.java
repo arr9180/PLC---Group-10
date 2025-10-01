@@ -22,11 +22,18 @@ public interface OperandNode extends JottTree {
             return FunctionCallNode.parseFunctionCallNode(tokens);
         }
 
+        if (type == TokenType.STRING) {
+            return StringNode.parse(tokens);
+        }
+
         if (type == TokenType.ID_KEYWORD) {
+            if (BooleanNode.isBooleanLiteral(next.getToken())) {
+                return BooleanNode.parse(tokens);
+            }
             return IdNode.parseIDNode(tokens);
         }
 
-        if (type == TokenType.NUMBER) {
+        if (type == TokenType.NUMBER || (type == TokenType.MATH_OP && "-".equals(next.getToken()))) {
             return NumberNode.parseNumberNode(tokens);
         }
 

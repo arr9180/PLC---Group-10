@@ -5,7 +5,10 @@
 
 
 
-javac *.java
+
+javac phase2/*.java phase2/nodes/*.java
 
 
-java phase1.JottTokenizerTester
+
+java phase2.JottTokenizerTester
+java phase2.JottParserTester

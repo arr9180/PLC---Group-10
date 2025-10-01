@@ -8,6 +8,7 @@ package phase2;
  */
 
 import java.util.ArrayList;
+import phase2.nodes.ProgramNode;
 
 public class JottParser {
 
@@ -18,6 +19,17 @@ public class JottParser {
      *         or null upon an error in parsing.
      */
     public static JottTree parse(ArrayList<Token> tokens){
-		return null;
+        ProgramNode program = ProgramNode.parse(tokens);
+        if (program == null) {
+            return null;
+        }
+        if (!tokens.isEmpty()) {
+            Token token = tokens.get(0);
+            System.err.println("Syntax Error");
+            System.err.println("Unexpected token \"" + token.getToken() + "\"");
+            System.err.println(token.getFilename() + ":" + token.getLineNum());
+            return null;
+        }
+        return program;
     }
 }
