@@ -20,6 +20,7 @@ public class FunctionBodyNode implements JottTree {
     }
 
     public static FunctionBodyNode parse(ArrayList<Token> tokens) {
+        // Parse variable declarations at the start of function body
         List<VariableDecNode> variableDeclarations = new ArrayList<>();
         while (looksLikeVariableDeclaration(tokens)) {
             VariableDecNode declaration = VariableDecNode.parse(tokens);
@@ -28,29 +29,40 @@ public class FunctionBodyNode implements JottTree {
             }
             variableDeclarations.add(declaration);
         }
+
+        // Parse statements and return
         BodyBlock bodyBlock = parseBodyBlock(tokens);
         if (bodyBlock == null) {
             return null;
         }
+
         return new FunctionBodyNode(variableDeclarations, bodyBlock.statements, bodyBlock.returnNode);
     }
 
     static BodyBlock parseBodyBlock(ArrayList<Token> tokens) {
+        // Parse all statements until return or closing brace
         List<StatementNode> statements = new ArrayList<>();
         while (!tokens.isEmpty()) {
             Token next = tokens.get(0);
+
+            // Stop at closing brace
             if (next.getTokenType() == TokenType.R_BRACE) {
                 break;
             }
+
+            // Stop at return statement
             if (isReturnToken(next)) {
                 break;
             }
+
             StatementNode statement = StatementNode.parse(tokens);
             if (statement == null) {
                 return null;
             }
             statements.add(statement);
         }
+
+        // Parse optional return statement
         ReturnNode returnNode = null;
         if (!tokens.isEmpty() && isReturnToken(tokens.get(0))) {
             returnNode = ReturnNode.parse(tokens);
@@ -58,25 +70,31 @@ public class FunctionBodyNode implements JottTree {
                 return null;
             }
         }
+
         return new BodyBlock(statements, returnNode);
     }
 
+    // Check if next tokens look like a variable declaration
     private static boolean looksLikeVariableDeclaration(ArrayList<Token> tokens) {
         if (tokens.size() < 3) {
             return false;
         }
+
         Token typeToken = tokens.get(0);
         if (typeToken.getTokenType() != TokenType.ID_KEYWORD || !VariableDecNode.isValidType(typeToken.getToken())) {
             return false;
         }
+
         Token idToken = tokens.get(1);
         if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLowerCase(idToken.getToken().charAt(0))) {
             return false;
         }
+
         Token third = tokens.get(2);
         return third.getTokenType() == TokenType.SEMICOLON;
     }
 
+    // Check if token is Return keyword
     private static boolean isReturnToken(Token token) {
         return token.getTokenType() == TokenType.ID_KEYWORD && "Return".equals(token.getToken());
     }

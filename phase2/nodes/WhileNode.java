@@ -20,11 +20,13 @@ public class WhileNode implements JottTree {
     }
 
     public static WhileNode parse(ArrayList<Token> tokens) {
+        // Expect While keyword
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected While but reached end of input");
             return null;
         }
+
         Token keyword = tokens.get(0);
         if (keyword.getTokenType() != TokenType.ID_KEYWORD || !"While".equals(keyword.getToken())) {
             System.err.println("Syntax Error");
@@ -33,35 +35,46 @@ public class WhileNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse condition in brackets
         if (!expect(tokens, TokenType.L_BRACKET, "[", "[ after While")) {
             return null;
         }
+
         ExpressionNode condition = ExpressionNode.parse(tokens);
         if (condition == null) {
             return null;
         }
+
         if (!expect(tokens, TokenType.R_BRACKET, "]", "] after While condition")) {
             return null;
         }
+
+        // Parse While body
         if (!expect(tokens, TokenType.L_BRACE, "{", "{ to start While body")) {
             return null;
         }
+
         FunctionBodyNode.BodyBlock bodyBlock = FunctionBodyNode.parseBodyBlock(tokens);
         if (bodyBlock == null) {
             return null;
         }
+
         if (!expect(tokens, TokenType.R_BRACE, "}", "} to close While body")) {
             return null;
         }
+
         return new WhileNode(condition, bodyBlock.statements, bodyBlock.returnNode);
     }
 
+    // Helper to verify expected token type and value
     private static boolean expect(ArrayList<Token> tokens, TokenType type, String expectedToken, String message) {
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected " + message + " but reached end of input");
             return false;
         }
+
         Token token = tokens.get(0);
         if (token.getTokenType() != type || (expectedToken != null && !expectedToken.equals(token.getToken()))) {
             System.err.println("Syntax Error");
@@ -69,6 +82,7 @@ public class WhileNode implements JottTree {
             System.err.println(token.getFilename() + ":" + token.getLineNum());
             return false;
         }
+
         tokens.remove(0);
         return true;
     }

@@ -17,12 +17,14 @@ public class FunctionCallNode implements OperandNode {
     }
 
     public static FunctionCallNode parseFunctionCallNode(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens == null || tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected function call but reached end of input");
             return null;
         }
 
+        // Expect :: header
         Token header = tokens.get(0);
         if (header.getTokenType() != TokenType.FC_HEADER) {
             System.err.println("Syntax Error");
@@ -32,6 +34,7 @@ public class FunctionCallNode implements OperandNode {
         }
         tokens.remove(0);
 
+        // Expect function name
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected function name after '::' but reached end of input");
@@ -46,6 +49,7 @@ public class FunctionCallNode implements OperandNode {
             return null;
         }
 
+        // Verify function name starts with lowercase
         String nameLexeme = nameToken.getToken();
         if (nameLexeme.isEmpty() || !Character.isLowerCase(nameLexeme.charAt(0))) {
             System.err.println("Syntax Error");
@@ -55,6 +59,7 @@ public class FunctionCallNode implements OperandNode {
         }
         tokens.remove(0);
 
+        // Expect [ to start arguments
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected '[' after function name but reached end of input");
@@ -70,6 +75,7 @@ public class FunctionCallNode implements OperandNode {
         }
         tokens.remove(0);
 
+        // Parse argument list
         List<ExpressionNode> args = new ArrayList<>();
 
         if (tokens.isEmpty()) {
@@ -78,6 +84,7 @@ public class FunctionCallNode implements OperandNode {
             return null;
         }
 
+        // Parse arguments separated by commas
         if (tokens.get(0).getTokenType() != TokenType.R_BRACKET) {
             while (true) {
                 ExpressionNode expression = ExpressionNode.parse(tokens);

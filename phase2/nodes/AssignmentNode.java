@@ -17,15 +17,19 @@ public class AssignmentNode implements JottTree {
     }
 
     public static AssignmentNode parse(ArrayList<Token> tokens) {
+        // Parse the identifier on the left side
         IdNode identifier = IdNode.parseIDNode(tokens);
         if (identifier == null) {
             return null;
         }
+
+        // Check for = assignment operator
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected = in assignment but reached end of input");
             return null;
         }
+
         Token assign = tokens.get(0);
         if (assign.getTokenType() != TokenType.ASSIGN) {
             System.err.println("Syntax Error");
@@ -34,15 +38,20 @@ public class AssignmentNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse the expression on the right side
         ExpressionNode expression = ExpressionNode.parse(tokens);
         if (expression == null) {
             return null;
         }
+
+        // Check for semicolon at end
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected ; after assignment but reached end of input");
             return null;
         }
+
         Token semicolon = tokens.get(0);
         if (semicolon.getTokenType() != TokenType.SEMICOLON) {
             System.err.println("Syntax Error");
@@ -51,6 +60,7 @@ public class AssignmentNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
         return new AssignmentNode(identifier, expression);
     }
 

@@ -19,47 +19,60 @@ public class FunctionParameterNode implements JottTree {
 
     public static List<FunctionParameterNode> parseParameters(ArrayList<Token> tokens) {
         List<FunctionParameterNode> parameters = new ArrayList<>();
+
+        // Check for empty parameter list
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected parameter list but reached end of input");
             return null;
         }
+
         if (tokens.get(0).getTokenType() == TokenType.R_BRACKET) {
             return parameters;
         }
+
+        // Parse comma-separated parameters
         while (true) {
             FunctionParameterNode parameter = parseSingleParameter(tokens);
             if (parameter == null) {
                 return null;
             }
             parameters.add(parameter);
+
             if (tokens.isEmpty()) {
                 System.err.println("Syntax Error");
                 System.err.println("Expected , or ] after function parameter");
                 return null;
             }
+
             Token next = tokens.get(0);
             if (next.getTokenType() == TokenType.COMMA) {
                 tokens.remove(0);
                 continue;
             }
+
             if (next.getTokenType() == TokenType.R_BRACKET) {
                 break;
             }
+
             System.err.println("Syntax Error");
             System.err.println("Expected , or ] after function parameter but found \"" + next.getToken() + "\"");
             System.err.println(next.getFilename() + ":" + next.getLineNum());
             return null;
         }
+
         return parameters;
     }
 
+    // Parse a single parameter (id:type)
     private static FunctionParameterNode parseSingleParameter(ArrayList<Token> tokens) {
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected parameter but reached end of input");
             return null;
         }
+
+        // Parse parameter name
         Token idToken = tokens.get(0);
         if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLowerCase(idToken.getToken().charAt(0))) {
             System.err.println("Syntax Error");
@@ -68,11 +81,14 @@ public class FunctionParameterNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Expect colon
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected : after parameter name but reached end of input");
             return null;
         }
+
         Token colon = tokens.get(0);
         if (colon.getTokenType() != TokenType.COLON) {
             System.err.println("Syntax Error");
@@ -81,11 +97,14 @@ public class FunctionParameterNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse parameter type
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected type after : but reached end of input");
             return null;
         }
+
         Token typeToken = tokens.get(0);
         if (typeToken.getTokenType() != TokenType.ID_KEYWORD || !isType(typeToken.getToken())) {
             System.err.println("Syntax Error");
@@ -94,9 +113,11 @@ public class FunctionParameterNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
         return new FunctionParameterNode(idToken, typeToken);
     }
 
+    // Check if text is a valid parameter type
     private static boolean isType(String text) {
         return "Integer".equals(text) || "Double".equals(text) || "String".equals(text) || "Boolean".equals(text);
     }

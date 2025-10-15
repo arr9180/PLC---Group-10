@@ -16,17 +16,20 @@ public class NumberNode implements OperandNode {
     }
 
     public static NumberNode parseNumberNode(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens == null || tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected number but reached end of input");
             return null;
         }
 
+        // Check for optional negative sign
         boolean negative = false;
         Token next = tokens.get(0);
         if (next.getTokenType() == TokenType.MATH_OP && "-".equals(next.getToken())) {
             negative = true;
             tokens.remove(0);
+
             if (tokens.isEmpty()) {
                 System.err.println("Syntax Error");
                 System.err.println("Expected number after - but reached end of input");
@@ -35,6 +38,7 @@ public class NumberNode implements OperandNode {
             next = tokens.get(0);
         }
 
+        // Verify token is a number
         if (next.getTokenType() != TokenType.NUMBER) {
             System.err.println("Syntax Error");
             System.err.println("Expected number but found \"" + next.getToken() + "\"");
@@ -42,6 +46,7 @@ public class NumberNode implements OperandNode {
             return null;
         }
 
+        // Validate number format
         String lexeme = next.getToken();
         if (!lexeme.matches("(?:\\d+(?:\\.\\d*)?|\\.\\d+)")) {
             System.err.println("Syntax Error");

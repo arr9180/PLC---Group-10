@@ -15,18 +15,25 @@ public class ProgramNode implements JottTree {
     }
 
     public static ProgramNode parse(ArrayList<Token> tokens) {
+        // Parse all function definitions in the program
         List<FunctionDefNode> functions = new ArrayList<>();
+
         while (!tokens.isEmpty()) {
             int sizeBefore = tokens.size();
+
             FunctionDefNode function = FunctionDefNode.parse(tokens);
             if (function == null) {
                 return null;
             }
+
             functions.add(function);
+
+            // Ensure progress was made
             if (tokens.size() == sizeBefore) {
                 return null;
             }
         }
+
         return new ProgramNode(functions);
     }
 

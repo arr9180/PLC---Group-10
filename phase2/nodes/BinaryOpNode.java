@@ -3,6 +3,7 @@ package phase2.nodes;
 import phase2.JottTree;
 import phase2.Token;
 
+// Represents a binary operation (e.g., +, -, *, /, ==, !=, <, >)
 public class BinaryOpNode implements JottTree {
 
     private final JottTree left;

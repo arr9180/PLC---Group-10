@@ -24,11 +24,13 @@ public class IfNode implements JottTree {
     }
 
     public static IfNode parse(ArrayList<Token> tokens) {
+        // Expect If keyword
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected If but reached end of input");
             return null;
         }
+
         Token ifToken = tokens.get(0);
         if (ifToken.getTokenType() != TokenType.ID_KEYWORD || !"If".equals(ifToken.getToken())) {
             System.err.println("Syntax Error");
@@ -37,26 +39,36 @@ public class IfNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse condition in brackets
         if (!expectToken(tokens, TokenType.L_BRACKET, "[", "[ after If")) {
             return null;
         }
+
         ExpressionNode condition = ExpressionNode.parse(tokens);
         if (condition == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACKET, "]", "] after If condition")) {
             return null;
         }
+
+        // Parse If body
         if (!expectToken(tokens, TokenType.L_BRACE, "{", "{ to start If body")) {
             return null;
         }
+
         FunctionBodyNode.BodyBlock bodyBlock = FunctionBodyNode.parseBodyBlock(tokens);
         if (bodyBlock == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACE, "}", "} to close If body")) {
             return null;
         }
+
+        // Parse Elseif clauses
         List<ElseIfClause> elseIfClauses = new ArrayList<>();
         while (hasElseIf(tokens)) {
             ElseIfClause clause = parseElseIf(tokens);
@@ -65,6 +77,8 @@ public class IfNode implements JottTree {
             }
             elseIfClauses.add(clause);
         }
+
+        // Parse optional Else clause
         ElseClause elseClause = null;
         if (hasElse(tokens)) {
             elseClause = parseElse(tokens);
@@ -72,6 +86,7 @@ public class IfNode implements JottTree {
                 return null;
             }
         }
+
         return new IfNode(condition, bodyBlock.statements, bodyBlock.returnNode, elseIfClauses, elseClause);
     }
 
@@ -100,32 +115,42 @@ public class IfNode implements JottTree {
         return token.getTokenType() == TokenType.ID_KEYWORD && "Elseif".equals(token.getToken());
     }
 
+    // Parse an Elseif clause
     private static ElseIfClause parseElseIf(ArrayList<Token> tokens) {
-        Token keyword = tokens.get(0);
         tokens.remove(0);
+
+        // Parse condition
         if (!expectToken(tokens, TokenType.L_BRACKET, "[", "[ after Elseif")) {
             return null;
         }
+
         ExpressionNode condition = ExpressionNode.parse(tokens);
         if (condition == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACKET, "]", "] after Elseif condition")) {
             return null;
         }
+
+        // Parse body
         if (!expectToken(tokens, TokenType.L_BRACE, "{", "{ to start Elseif body")) {
             return null;
         }
+
         FunctionBodyNode.BodyBlock bodyBlock = FunctionBodyNode.parseBodyBlock(tokens);
         if (bodyBlock == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACE, "}", "} to close Elseif body")) {
             return null;
         }
+
         return new ElseIfClause(condition, bodyBlock.statements, bodyBlock.returnNode);
     }
 
+    // Check if next token is Else keyword
     private static boolean hasElse(ArrayList<Token> tokens) {
         if (tokens.isEmpty()) {
             return false;
@@ -134,18 +159,24 @@ public class IfNode implements JottTree {
         return token.getTokenType() == TokenType.ID_KEYWORD && "Else".equals(token.getToken());
     }
 
+    // Parse an Else clause
     private static ElseClause parseElse(ArrayList<Token> tokens) {
         tokens.remove(0);
+
+        // Parse body
         if (!expectToken(tokens, TokenType.L_BRACE, "{", "{ to start Else body")) {
             return null;
         }
+
         FunctionBodyNode.BodyBlock bodyBlock = FunctionBodyNode.parseBodyBlock(tokens);
         if (bodyBlock == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACE, "}", "} to close Else body")) {
             return null;
         }
+
         return new ElseClause(bodyBlock.statements, bodyBlock.returnNode);
     }
 

@@ -14,11 +14,14 @@ public class StringNode implements OperandNode {
     }
 
     public static StringNode parse(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected string literal but reached end of input");
             return null;
         }
+
+        // Verify token is a string
         Token token = tokens.get(0);
         if (token.getTokenType() != TokenType.STRING) {
             System.err.println("Syntax Error");
@@ -26,6 +29,7 @@ public class StringNode implements OperandNode {
             System.err.println(token.getFilename() + ":" + token.getLineNum());
             return null;
         }
+
         tokens.remove(0);
         return new StringNode(token);
     }

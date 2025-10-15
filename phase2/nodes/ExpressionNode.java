@@ -15,12 +15,16 @@ public class ExpressionNode implements JottTree {
     }
 
     public static ExpressionNode parse(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected expression but reached end of input");
             return null;
         }
+
         Token first = tokens.get(0);
+
+        // Handle string literals
         if (first.getTokenType() == TokenType.STRING) {
             StringNode stringNode = StringNode.parse(tokens);
             if (stringNode == null) {
@@ -28,6 +32,8 @@ public class ExpressionNode implements JottTree {
             }
             return new ExpressionNode(stringNode);
         }
+
+        // Handle boolean literals
         if (first.getTokenType() == TokenType.ID_KEYWORD && BooleanNode.isBooleanLiteral(first.getToken())) {
             BooleanNode booleanNode = BooleanNode.parse(tokens);
             if (booleanNode == null) {
@@ -35,22 +41,31 @@ public class ExpressionNode implements JottTree {
             }
             return new ExpressionNode(booleanNode);
         }
+
+        // Parse left operand
         OperandNode leftOperand = OperandNode.parseOperand(tokens);
         if (leftOperand == null) {
             return null;
         }
+
+        // Check if there is an operator
         if (tokens.isEmpty()) {
             return new ExpressionNode((JottTree) leftOperand);
         }
+
         Token operator = tokens.get(0);
         if (operator.getTokenType() != TokenType.REL_OP && operator.getTokenType() != TokenType.MATH_OP) {
             return new ExpressionNode((JottTree) leftOperand);
         }
+
         tokens.remove(0);
+
+        // Parse right operand for binary operation
         OperandNode rightOperand = OperandNode.parseOperand(tokens);
         if (rightOperand == null) {
             return null;
         }
+
         BinaryOpNode binary = new BinaryOpNode((JottTree) leftOperand, operator, (JottTree) rightOperand);
         return new ExpressionNode(binary);
     }

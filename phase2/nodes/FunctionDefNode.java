@@ -22,11 +22,13 @@ public class FunctionDefNode implements JottTree {
     }
 
     public static FunctionDefNode parse(ArrayList<Token> tokens) {
+        // Expect Def keyword
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected Def but reached end of input");
             return null;
         }
+
         Token defToken = tokens.get(0);
         if (defToken.getTokenType() != TokenType.ID_KEYWORD || !"Def".equals(defToken.getToken())) {
             System.err.println("Syntax Error");
@@ -35,11 +37,14 @@ public class FunctionDefNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse function name
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected function name but reached end of input");
             return null;
         }
+
         Token nameToken = tokens.get(0);
         if (nameToken.getTokenType() != TokenType.ID_KEYWORD || nameToken.getToken().isEmpty() || !Character.isLowerCase(nameToken.getToken().charAt(0))) {
             System.err.println("Syntax Error");
@@ -48,24 +53,32 @@ public class FunctionDefNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse parameter list
         if (!expectToken(tokens, TokenType.L_BRACKET, "[", "[ after function name")) {
             return null;
         }
+
         List<FunctionParameterNode> parameters = FunctionParameterNode.parseParameters(tokens);
         if (parameters == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACKET, "]", "] after parameter list")) {
             return null;
         }
+
+        // Parse return type
         if (!expectToken(tokens, TokenType.COLON, ":", ": after parameter list")) {
             return null;
         }
+
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected return type but reached end of input");
             return null;
         }
+
         Token returnTypeToken = tokens.get(0);
         if (returnTypeToken.getTokenType() != TokenType.ID_KEYWORD || !isReturnType(returnTypeToken.getToken())) {
             System.err.println("Syntax Error");
@@ -74,25 +87,32 @@ public class FunctionDefNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse function body
         if (!expectToken(tokens, TokenType.L_BRACE, "{", "{ to start function body")) {
             return null;
         }
+
         FunctionBodyNode body = FunctionBodyNode.parse(tokens);
         if (body == null) {
             return null;
         }
+
         if (!expectToken(tokens, TokenType.R_BRACE, "}", "} to close function body")) {
             return null;
         }
+
         return new FunctionDefNode(nameToken, parameters, returnTypeToken, body);
     }
 
+    // Helper to verify expected token type and value
     private static boolean expectToken(ArrayList<Token> tokens, TokenType type, String expected, String message) {
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected " + message + " but reached end of input");
             return false;
         }
+
         Token token = tokens.get(0);
         if (token.getTokenType() != type || (expected != null && !expected.equals(token.getToken()))) {
             System.err.println("Syntax Error");
@@ -100,10 +120,12 @@ public class FunctionDefNode implements JottTree {
             System.err.println(token.getFilename() + ":" + token.getLineNum());
             return false;
         }
+
         tokens.remove(0);
         return true;
     }
 
+    // Check if text is valid return type
     private static boolean isReturnType(String text) {
         return "Void".equals(text) || "Integer".equals(text) || "Double".equals(text) || "Boolean".equals(text) || "String".equals(text);
     }

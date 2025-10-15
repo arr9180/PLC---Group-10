@@ -17,11 +17,13 @@ public class ReturnNode implements JottTree {
     }
 
     public static ReturnNode parse(ArrayList<Token> tokens) {
+        // Expect Return keyword
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected Return but reached end of input");
             return null;
         }
+
         Token returnToken = tokens.get(0);
         if (returnToken.getTokenType() != TokenType.ID_KEYWORD || !"Return".equals(returnToken.getToken())) {
             System.err.println("Syntax Error");
@@ -30,15 +32,20 @@ public class ReturnNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
+        // Parse return expression
         ExpressionNode expression = ExpressionNode.parse(tokens);
         if (expression == null) {
             return null;
         }
+
+        // Expect semicolon
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected ; after return statement but reached end of input");
             return null;
         }
+
         Token semicolon = tokens.get(0);
         if (semicolon.getTokenType() != TokenType.SEMICOLON) {
             System.err.println("Syntax Error");
@@ -47,6 +54,7 @@ public class ReturnNode implements JottTree {
             return null;
         }
         tokens.remove(0);
+
         return new ReturnNode(returnToken, expression);
     }
 

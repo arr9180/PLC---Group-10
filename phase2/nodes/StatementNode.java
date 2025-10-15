@@ -15,12 +15,16 @@ public class StatementNode implements JottTree {
     }
 
     public static StatementNode parse(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected statement but reached end of input");
             return null;
         }
+
         Token next = tokens.get(0);
+
+        // Check for If statement
         if (next.getTokenType() == TokenType.ID_KEYWORD && "If".equals(next.getToken())) {
             IfNode ifNode = IfNode.parse(tokens);
             if (ifNode == null) {
@@ -28,6 +32,8 @@ public class StatementNode implements JottTree {
             }
             return new StatementNode(ifNode);
         }
+
+        // Check for While statement
         if (next.getTokenType() == TokenType.ID_KEYWORD && "While".equals(next.getToken())) {
             WhileNode whileNode = WhileNode.parse(tokens);
             if (whileNode == null) {
@@ -35,6 +41,8 @@ public class StatementNode implements JottTree {
             }
             return new StatementNode(whileNode);
         }
+
+        // Check for function call statement
         if (next.getTokenType() == TokenType.FC_HEADER) {
             FunctionCallNode functionCall = FunctionCallNode.parseFunctionCallNode(tokens);
             if (functionCall == null) {
@@ -45,13 +53,17 @@ public class StatementNode implements JottTree {
             }
             return new StatementNode(functionCall);
         }
+
+        // Default to assignment statement
         AssignmentNode assignment = AssignmentNode.parse(tokens);
         if (assignment == null) {
             return null;
         }
+
         return new StatementNode(assignment);
     }
 
+    // Helper to consume semicolon after function call
     private static boolean consumeSemicolon(ArrayList<Token> tokens, Token reference) {
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
@@ -61,6 +73,7 @@ public class StatementNode implements JottTree {
             }
             return false;
         }
+
         Token token = tokens.get(0);
         if (token.getTokenType() != TokenType.SEMICOLON) {
             System.err.println("Syntax Error");
@@ -68,6 +81,7 @@ public class StatementNode implements JottTree {
             System.err.println(token.getFilename() + ":" + token.getLineNum());
             return false;
         }
+
         tokens.remove(0);
         return true;
     }

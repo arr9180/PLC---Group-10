@@ -14,11 +14,14 @@ public class BooleanNode implements OperandNode {
     }
 
     public static BooleanNode parse(ArrayList<Token> tokens) {
+        // Check for end of input
         if (tokens.isEmpty()) {
             System.err.println("Syntax Error");
             System.err.println("Expected boolean literal but reached end of input");
             return null;
         }
+
+        // Verify token is a boolean literal (True or False)
         Token token = tokens.get(0);
         if (token.getTokenType() != TokenType.ID_KEYWORD || !isBooleanLiteral(token.getToken())) {
             System.err.println("Syntax Error");
@@ -26,10 +29,12 @@ public class BooleanNode implements OperandNode {
             System.err.println(token.getFilename() + ":" + token.getLineNum());
             return null;
         }
+
         tokens.remove(0);
         return new BooleanNode(token);
     }
 
+    // Check if text is True or False
     static boolean isBooleanLiteral(String text) {
         return "True".equals(text) || "False".equals(text);
     }
