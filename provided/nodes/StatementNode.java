@@ -25,7 +25,8 @@ public class StatementNode implements JottTree {
 
 		Token next = tokens.get(0);
 
-		if (next.getTokenType() == TokenType.ID_KEYWORD && "If".equals(next.getToken())) {
+		if (next.getTokenType() == TokenType.ID_KEYWORD && "If".equals(next.getToken())
+				&& hasFollowingBracket(tokens)) {
 			IfNode ifNode = IfNode.parse(tokens);
 			if (ifNode == null) {
 				return null;
@@ -33,7 +34,8 @@ public class StatementNode implements JottTree {
 			return new StatementNode(ifNode);
 		}
 
-		if (next.getTokenType() == TokenType.ID_KEYWORD && "While".equals(next.getToken())) {
+		if (next.getTokenType() == TokenType.ID_KEYWORD && "While".equals(next.getToken())
+				&& hasFollowingBracket(tokens)) {
 			WhileNode whileNode = WhileNode.parse(tokens);
 			if (whileNode == null) {
 				return null;
@@ -58,6 +60,10 @@ public class StatementNode implements JottTree {
 		}
 
 		return new StatementNode(assignment);
+	}
+
+	private static boolean hasFollowingBracket(ArrayList<Token> tokens) {
+		return tokens.size() > 1 && tokens.get(1).getTokenType() == TokenType.L_BRACKET;
 	}
 
 	private static boolean consumeSemicolon(ArrayList<Token> tokens, Token reference) {

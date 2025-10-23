@@ -81,7 +81,7 @@ public class FunctionBodyNode implements JottTree {
 		}
 
 		Token idToken = tokens.get(1);
-		if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLowerCase(idToken.getToken().charAt(0))) {
+		if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty()) {
 			return false;
 		}
 
