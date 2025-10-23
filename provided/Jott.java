@@ -6,7 +6,7 @@ public class Jott {
 
 	public static void main(String[] args) {
 		if (args.length != 1) {
-			System.err.println("Usage: java phase2.Jott <source_file>");
+			System.err.println("Usage: java provided.Jott <source_file>");
 			return;
 		}
 

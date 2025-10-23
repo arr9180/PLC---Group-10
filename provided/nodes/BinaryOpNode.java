@@ -51,6 +51,10 @@ public class BinaryOpNode implements JottTree {
 		String op = operatorToken.getToken();
 
 		if (operatorToken.getTokenType() == TokenType.MATH_OP) {
+			if ("/".equals(op) && right instanceof NumberNode && ((NumberNode) right).isZero()) {
+				context.reportSemanticError("Division by zero", operatorToken);
+				return false;
+			}
 			if (!leftType.isNumeric() || !rightType.isNumeric()) {
 				context.reportSemanticError("Math operations require numeric operands", operatorToken);
 				return false;

@@ -245,6 +245,7 @@ public class IfNode implements JottTree {
 		ok &= bodySummary.valid;
 
 		boolean allElseIfReturn = true;
+		// validate each elseif
 		for (ElseIfClause clause : elseIfClauses) {
 			if (!clause.condition.validateTree(context)) {
 				ok = false;
@@ -274,7 +275,7 @@ public class IfNode implements JottTree {
 			allElseIfReturn = false;
 		}
 
-		// silly note: all paths must bounce out.
+		// all paths must return
 		alwaysReturns = bodySummary.returns && allElseIfReturn && elseReturns;
 
 		return ok && !context.hasError();

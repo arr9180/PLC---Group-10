@@ -1,6 +1,7 @@
 #!/bin/bash
-# Delete all .class files in phase2 folder
+# Delete all compiled class files inside provided and testers packages
 
-find phase2 -name "*.class" -type f -delete
+find provided -name "*.class" -type f -delete
+find testers -name "*.class" -type f -delete
 
-echo "All .class files in phase2 folder have been deleted."
+echo "All .class files in provided and testers folders have been deleted."

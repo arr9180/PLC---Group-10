@@ -96,6 +96,18 @@ public class NumberNode implements OperandNode {
 		return true;
 	}
 
+	public boolean isZero() {
+		try {
+			double value = Double.parseDouble(numberToken.getToken());
+			if (negative) {
+				value = -value;
+			}
+			return Double.compare(value, 0.0) == 0;
+		} catch (NumberFormatException exception) {
+			return false;
+		}
+	}
+
 	@Override
 	public JottType getType() {
 		return type;

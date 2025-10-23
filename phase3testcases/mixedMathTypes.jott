@@ -1,0 +1,16 @@
+#this should pass parsing but fail phase 3 for mixed numeric types
+
+Def foo[]:Integer{
+    Integer x;
+    Double y;
+    x = 3;
+    y = 3.2 + x;
+    ::print[5];
+    #this is a comment
+    ::print[ "foo bar" ];
+    Return x;
+}
+
+Def main[]:Void{
+    ::foo[];
+}

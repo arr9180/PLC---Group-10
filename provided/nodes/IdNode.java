@@ -33,9 +33,9 @@ public class IdNode implements OperandNode {
 		}
 
 		String lexeme = next.getToken();
-		if (lexeme.isEmpty() || !Character.isLowerCase(lexeme.charAt(0))) {
+		if (lexeme.isEmpty() || !Character.isLetter(lexeme.charAt(0))) {
 			System.err.println("Syntax Error");
-			System.err.println("Invalid identifier \"" + lexeme + "\". Identifiers must start with a lowercase letter");
+			System.err.println("Invalid identifier \"" + lexeme + "\". Identifiers must start with a letter");
 			System.err.println(next.getFilename() + ":" + next.getLineNum());
 			return null;
 		}

@@ -156,6 +156,7 @@ public class FunctionBodyNode implements JottTree {
 			if (context.hasError()) {
 				return new ValidationSummary(false, false);
 			}
+			// check if we hit a return
 			if (fallsThrough && statement.alwaysReturns()) {
 				fallsThrough = false;
 			}

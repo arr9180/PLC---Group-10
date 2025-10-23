@@ -66,6 +66,7 @@ public class ProgramNode implements JottTree {
 		context.functions().reset();
 		FunctionDefNode mainFunction = null;
 
+		// register all functions first
 		for (FunctionDefNode function : functions) {
 			if (context.hasError()) {
 				break;
@@ -87,6 +88,7 @@ public class ProgramNode implements JottTree {
 			return false;
 		}
 
+		// main is required
 		if (mainFunction == null) {
 			context.reportSemanticError("Missing main[]:Void function", functions.isEmpty() ? null : functions.get(0).getNameToken());
 			return false;

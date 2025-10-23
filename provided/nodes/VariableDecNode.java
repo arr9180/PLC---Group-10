@@ -38,12 +38,12 @@ public class VariableDecNode implements JottTree {
 		tokens.remove(0);
 
 		Token idToken = tokens.get(0);
-		if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLowerCase(idToken.getToken().charAt(0))) {
-			System.err.println("Syntax Error");
-			System.err.println("Invalid identifier \"" + idToken.getToken() + "\" in declaration");
-			System.err.println(idToken.getFilename() + ":" + idToken.getLineNum());
-			return null;
-		}
+        if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLetter(idToken.getToken().charAt(0))) {
+            System.err.println("Syntax Error");
+            System.err.println("Invalid identifier \"" + idToken.getToken() + "\" in declaration");
+            System.err.println(idToken.getFilename() + ":" + idToken.getLineNum());
+            return null;
+        }
 		tokens.remove(0);
 
 		if (tokens.isEmpty()) {
@@ -103,11 +103,41 @@ public class VariableDecNode implements JottTree {
 			return false;
 		}
 
+		String name = idToken.getToken();
+		if (!(name != null && !name.isEmpty() && Character.isLowerCase(name.charAt(0)))) {
+			context.reportSemanticError("Variable \"" + name + "\" must start with a lowercase letter", idToken);
+			return false;
+		}
+		if (isReserved(name) || isBuiltinFunction(name)) {
+			context.reportSemanticError("Variable \"" + name + "\" cannot use a reserved keyword", idToken);
+			return false;
+		}
+
 		VariableTable variables = context.variables();
 		if (!variables.declare(idToken.getToken(), type, false)) {
 			context.reportSemanticError("Variable \"" + idToken.getToken() + "\" already defined in this scope", idToken);
 			return false;
 		}
 		return true;
+	}
+
+	private boolean isReserved(String name) {
+		if (name == null) {
+			return false;
+		}
+		String lower = name.toLowerCase();
+		return lower.equals("def") || lower.equals("return") || lower.equals("if")
+				|| lower.equals("else") || lower.equals("elseif") || lower.equals("while")
+				|| lower.equals("true") || lower.equals("false") || lower.equals("void")
+				|| lower.equals("integer") || lower.equals("double") || lower.equals("boolean")
+				|| lower.equals("string");
+	}
+
+	private boolean isBuiltinFunction(String name) {
+		if (name == null) {
+			return false;
+		}
+		String lower = name.toLowerCase();
+		return lower.equals("print") || lower.equals("concat") || lower.equals("length");
 	}
 }

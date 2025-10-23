@@ -15,6 +15,7 @@ public class FunctionTable {
 
 	public void reset() {
 		functions.clear();
+		// add the builtin functions
 		addBuiltin("print", single(JottType.ANY), JottType.VOID);
 		addBuiltin("concat", pair(JottType.STRING, JottType.STRING), JottType.STRING);
 		addBuiltin("length", single(JottType.STRING), JottType.INTEGER);
@@ -39,6 +40,7 @@ public class FunctionTable {
 
 	public boolean addUserFunction(FunctionSignature signature) {
 		if (functions.containsKey(signature.getName())) {
+			// cant have duplicate function names
 			return false;
 		}
 		functions.put(signature.getName(), signature);

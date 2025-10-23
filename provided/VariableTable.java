@@ -36,6 +36,7 @@ public class VariableTable {
 	}
 
 	public VariableEntry lookup(String name) {
+		// search all scopes for the variable
 		for (Map<String, VariableEntry> scope : scopes) {
 			VariableEntry entry = scope.get(name);
 			if (entry != null) {

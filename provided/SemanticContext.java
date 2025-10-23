@@ -49,6 +49,7 @@ public class SemanticContext {
 	}
 
 	public void reportSemanticError(String message, Token token) {
+		// only report first error
 		if (hasError) {
 			return;
 		}

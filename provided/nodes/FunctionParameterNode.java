@@ -79,12 +79,12 @@ public class FunctionParameterNode implements JottTree {
 		}
 
 		Token idToken = tokens.get(0);
-		if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLowerCase(idToken.getToken().charAt(0))) {
-			System.err.println("Syntax Error");
-			System.err.println("Invalid parameter name \"" + idToken.getToken() + "\"");
-			System.err.println(idToken.getFilename() + ":" + idToken.getLineNum());
-			return null;
-		}
+        if (idToken.getTokenType() != TokenType.ID_KEYWORD || idToken.getToken().isEmpty() || !Character.isLetter(idToken.getToken().charAt(0))) {
+            System.err.println("Syntax Error");
+            System.err.println("Invalid parameter name \"" + idToken.getToken() + "\"");
+            System.err.println(idToken.getFilename() + ":" + idToken.getLineNum());
+            return null;
+        }
 		tokens.remove(0);
 
 		if (tokens.isEmpty()) {
@@ -163,6 +163,6 @@ public class FunctionParameterNode implements JottTree {
 
 	@Override
 	public boolean validateTree(SemanticContext context) {
-		return true;
+		return true; // validation handled in FunctionDefNode
 	}
 }

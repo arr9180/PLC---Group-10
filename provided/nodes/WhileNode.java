@@ -124,6 +124,7 @@ public class WhileNode implements JottTree {
 		if (!condition.validateTree(context)) {
 			ok = false;
 		}
+		// while needs boolean condition
 		if (!context.hasError() && condition.getType() != JottType.BOOLEAN) {
 			context.reportSemanticError("While condition must be Boolean", condition.getToken());
 			return false;
