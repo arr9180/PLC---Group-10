@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * This class is responsible for tokenizing Jott code.
  * 
- * @author Aidan Ryther & ___ & ___ & ___
+ * @author Aidan Ryther & Tiffany Lee & Kunlin Wen & Hongchang Lin & Ze Jun	Lin
  * 
  **/
 

@@ -14,7 +14,7 @@ import provided.nodes.ProgramNode;
 public class JottParser {
 
     /**
-     * Parses an ArrayList of Jotton tokens into a Jott Parse Tree.
+     * Parses an ArrayList of Jott tokens into a Jott Parse Tree.
      * @param tokens the ArrayList of Jott tokens to parse
      * @return the root of the Jott Parse Tree represented by the tokens.
      *         or null upon an error in parsing.
