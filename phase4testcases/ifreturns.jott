@@ -1,0 +1,17 @@
+Def pick[x:Integer]:Integer{
+If[x > 0]{
+Return 1;
+}
+Elseif[x == 0]{
+Return 0;
+}
+Else{
+Return -1;
+}
+}
+
+Def main[]:Void{
+::print[::pick[5]];
+::print[::pick[0]];
+::print[::pick[-3]];
+}

@@ -3,9 +3,11 @@ package provided.nodes;
 import java.util.ArrayList;
 
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 public class BooleanNode implements OperandNode {
 
@@ -44,21 +46,6 @@ public class BooleanNode implements OperandNode {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		return true;
 	}
@@ -71,5 +58,15 @@ public class BooleanNode implements OperandNode {
 	@Override
 	public Token getToken() {
 		return booleanToken;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	@Override
+	public RuntimeValue evaluate(RuntimeState state) {
+		return RuntimeValue.booleanValue("True".equals(booleanToken.getToken()));
 	}
 }

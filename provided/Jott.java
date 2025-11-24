@@ -23,6 +23,11 @@ public class Jott {
 
 		SemanticContext context = new SemanticContext();
 		context.reset();
-		tree.validateTree(context);
+		boolean valid = tree.validateTree(context);
+		if (!valid || context.hasError()) {
+			return;
+		}
+
+		tree.execute();
 	}
 }

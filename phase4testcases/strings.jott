@@ -1,0 +1,6 @@
+Def main[]:Void{
+String a;
+a = ::concat["foo","bar"];
+::print[a];
+::print[::length[::concat[a,"baz"]]];
+}

@@ -2,12 +2,15 @@ package provided.nodes;
 
 import java.util.ArrayList;
 
+import provided.ReturnSignal;
 import provided.FunctionSignature;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 public class ReturnNode implements JottTree {
 
@@ -64,21 +67,6 @@ public class ReturnNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (!expression.validateTree(context)) {
 			return false;
@@ -113,5 +101,15 @@ public class ReturnNode implements JottTree {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public ReturnSignal execute(RuntimeState state) {
+		RuntimeValue v = expression.evaluate(state);
+		return ReturnSignal.returned(v);
 	}
 }

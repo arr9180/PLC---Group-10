@@ -5,12 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import provided.ReturnSignal;
 import provided.FunctionSignature;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 import provided.VariableTable;
 
 public class FunctionDefNode implements JottTree {
@@ -204,21 +207,6 @@ public class FunctionDefNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (context.hasError()) {
 			return false;
@@ -272,6 +260,29 @@ public class FunctionDefNode implements JottTree {
 
 		context.exitFunction();
 		return !context.hasError();
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public RuntimeValue invoke(RuntimeState state, List<RuntimeValue> args) {
+		state.pushFrame();
+		for (int i = 0; i < parameters.size(); i++) {
+			FunctionParameterNode param = parameters.get(i);
+			state.declareVar(param.getName(), param.getType(), true);
+			state.setVar(param.getName(), args.get(i));
+		}
+		for (VariableDecNode dec : body.getVariableDeclarations()) {
+			state.declareVar(dec.getIdToken().getToken(), dec.getType(), false);
+		}
+		ReturnSignal result = body.executeBody(state);
+		state.popFrame();
+		if (result.hasReturned()) {
+			return result.getValue();
+		}
+		return RuntimeValue.voidValue();
 	}
 
 	private boolean isReserved(String name) {

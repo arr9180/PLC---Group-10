@@ -3,11 +3,14 @@ package provided.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import provided.ReturnSignal;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 import provided.VariableTable;
 
 public class WhileNode implements JottTree {
@@ -103,21 +106,6 @@ public class WhileNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		boolean ok = true;
 
@@ -137,5 +125,33 @@ public class WhileNode implements JottTree {
 		ok &= summary.valid;
 
 		return ok && !context.hasError();
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public ReturnSignal execute(RuntimeState state) {
+		while (true) {
+			RuntimeValue cond = condition.evaluate(state);
+			if (!cond.getBoolean()) {
+				return ReturnSignal.continueFlow();
+			}
+			state.pushScope();
+			for (StatementNode stmt : bodyStatements) {
+				ReturnSignal res = stmt.execute(state);
+				if (res.hasReturned()) {
+					state.popScope();
+					return res;
+				}
+			}
+			if (bodyReturn != null) {
+				ReturnSignal res = bodyReturn.execute(state);
+				state.popScope();
+				return res;
+			}
+			state.popScope();
+		}
 	}
 }

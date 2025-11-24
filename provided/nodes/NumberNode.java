@@ -3,9 +3,11 @@ package provided.nodes;
 import java.util.ArrayList;
 
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 public class NumberNode implements OperandNode {
 
@@ -68,30 +70,6 @@ public class NumberNode implements OperandNode {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		if (negative) {
-			return "-" + numberToken.getToken();
-		}
-		return numberToken.getToken();
-	}
-
-	@Override
-	public String convertToC() {
-		if (negative) {
-			return "-" + numberToken.getToken();
-		}
-		return numberToken.getToken();
-	}
-
-	@Override
-	public String convertToPython() {
-		if (negative) {
-			return "-" + numberToken.getToken();
-		}
-		return numberToken.getToken();
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		return true;
 	}
@@ -116,5 +94,22 @@ public class NumberNode implements OperandNode {
 	@Override
 	public Token getToken() {
 		return numberToken;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	@Override
+	public RuntimeValue evaluate(RuntimeState state) {
+		double v = Double.parseDouble(numberToken.getToken());
+		if (negative) {
+			v = -v;
+		}
+		if (type == JottType.INTEGER) {
+			return RuntimeValue.integerValue((int) v);
+		}
+		return RuntimeValue.doubleValue(v);
 	}
 }

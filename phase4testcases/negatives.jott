@@ -1,0 +1,11 @@
+Def main[]:Void{
+Integer a;
+Integer b;
+Double c;
+a = -5;
+b = 2;
+c = -3.5;
+::print[a + b];
+::print[a * b];
+::print[c + 1.5];
+}

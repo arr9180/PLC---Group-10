@@ -2,11 +2,14 @@ package provided.nodes;
 
 import java.util.ArrayList;
 
+import provided.ReturnSignal;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 import provided.VariableTable;
 
 public class AssignmentNode implements JottTree {
@@ -69,21 +72,6 @@ public class AssignmentNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (context.hasError()) {
 			return false;
@@ -116,5 +104,16 @@ public class AssignmentNode implements JottTree {
 
 		entry.setInitialized();
 		return true;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public ReturnSignal execute(RuntimeState state) {
+		RuntimeValue val = expression.evaluate(state);
+		state.setVar(identifier.getName(), val);
+		return ReturnSignal.continueFlow();
 	}
 }

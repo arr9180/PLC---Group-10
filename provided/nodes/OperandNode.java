@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 // Interface for nodes that can be used as operands in expressions
 public interface OperandNode extends JottTree {
@@ -14,6 +16,8 @@ public interface OperandNode extends JottTree {
 	JottType getType();
 
 	Token getToken();
+
+	RuntimeValue evaluate(RuntimeState state);
 
     static OperandNode parseOperand(ArrayList<Token> tokens) {
         // Check for end of input

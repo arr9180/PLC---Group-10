@@ -2,7 +2,9 @@ package provided.nodes;
 
 import java.util.ArrayList;
 
+import provided.ReturnSignal;
 import provided.JottTree;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
@@ -97,21 +99,6 @@ public class StatementNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (node instanceof FunctionCallNode) {
 			boolean ok = ((FunctionCallNode) node).validateTree(context);
@@ -143,5 +130,27 @@ public class StatementNode implements JottTree {
 
 	public boolean alwaysReturns() {
 		return alwaysReturns;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public ReturnSignal execute(RuntimeState state) {
+		if (node instanceof FunctionCallNode) {
+			((FunctionCallNode) node).evaluate(state);
+			return ReturnSignal.continueFlow();
+		}
+		if (node instanceof AssignmentNode) {
+			return ((AssignmentNode) node).execute(state);
+		}
+		if (node instanceof IfNode) {
+			return ((IfNode) node).execute(state);
+		}
+		if (node instanceof WhileNode) {
+			return ((WhileNode) node).execute(state);
+		}
+		return ReturnSignal.continueFlow();
 	}
 }

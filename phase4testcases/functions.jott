@@ -1,0 +1,9 @@
+Def inc[x:Integer]:Integer{
+Return x + 1;
+}
+
+Def main[]:Void{
+Integer y;
+y = ::inc[10];
+::print[y];
+}

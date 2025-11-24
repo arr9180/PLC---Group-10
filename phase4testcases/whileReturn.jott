@@ -1,0 +1,11 @@
+Def countdown[x:Integer]:Integer{
+While[x > 0]{
+Return x;
+}
+Return 0;
+}
+
+Def main[]:Void{
+::print[::countdown[3]];
+::print[::countdown[0]];
+}

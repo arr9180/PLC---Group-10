@@ -3,7 +3,9 @@ package provided.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import provided.ReturnSignal;
 import provided.JottTree;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
@@ -109,21 +111,6 @@ public class FunctionBodyNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (context.hasError()) {
 			return false;
@@ -176,6 +163,28 @@ public class FunctionBodyNode implements JottTree {
 
 	public boolean alwaysReturns() {
 		return alwaysReturns;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public List<VariableDecNode> getVariableDeclarations() {
+		return variableDeclarations;
+	}
+
+	public ReturnSignal executeBody(RuntimeState state) {
+		for (StatementNode statement : statements) {
+			ReturnSignal res = statement.execute(state);
+			if (res.hasReturned()) {
+				return res;
+			}
+		}
+		if (returnNode != null) {
+			return returnNode.execute(state);
+		}
+		return ReturnSignal.continueFlow();
 	}
 
 	static class BodyBlock {

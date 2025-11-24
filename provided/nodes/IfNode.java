@@ -3,11 +3,14 @@ package provided.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import provided.ReturnSignal;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 import provided.VariableTable;
 
 public class IfNode implements JottTree {
@@ -212,21 +215,6 @@ public class IfNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		boolean ok = true;
 
@@ -283,6 +271,69 @@ public class IfNode implements JottTree {
 
 	public boolean alwaysReturns() {
 		return alwaysReturns;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public ReturnSignal execute(RuntimeState state) {
+		RuntimeValue cond = condition.evaluate(state);
+		if (cond.getBoolean()) {
+			state.pushScope();
+			for (StatementNode stmt : bodyStatements) {
+				ReturnSignal res = stmt.execute(state);
+				if (res.hasReturned()) {
+					state.popScope();
+					return res;
+				}
+			}
+			if (bodyReturn != null) {
+				ReturnSignal res = bodyReturn.execute(state);
+				state.popScope();
+				return res;
+			}
+			state.popScope();
+			return ReturnSignal.continueFlow();
+		}
+		for (ElseIfClause clause : elseIfClauses) {
+			RuntimeValue c = clause.condition.evaluate(state);
+			if (c.getBoolean()) {
+				state.pushScope();
+				for (StatementNode stmt : clause.statements) {
+					ReturnSignal res = stmt.execute(state);
+					if (res.hasReturned()) {
+						state.popScope();
+						return res;
+					}
+				}
+				if (clause.returnNode != null) {
+					ReturnSignal res = clause.returnNode.execute(state);
+					state.popScope();
+					return res;
+				}
+				state.popScope();
+				return ReturnSignal.continueFlow();
+			}
+		}
+		if (elseClause != null) {
+			state.pushScope();
+			for (StatementNode stmt : elseClause.statements) {
+				ReturnSignal res = stmt.execute(state);
+				if (res.hasReturned()) {
+					state.popScope();
+					return res;
+				}
+			}
+			if (elseClause.returnNode != null) {
+				ReturnSignal res = elseClause.returnNode.execute(state);
+				state.popScope();
+				return res;
+			}
+			state.popScope();
+		}
+		return ReturnSignal.continueFlow();
 	}
 
 	private static class ElseIfClause {

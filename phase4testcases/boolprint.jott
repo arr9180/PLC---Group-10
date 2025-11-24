@@ -1,0 +1,4 @@
+Def main[]:Void{
+::print[True];
+::print[False];
+}

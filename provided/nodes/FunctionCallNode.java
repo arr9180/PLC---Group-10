@@ -5,9 +5,11 @@ import java.util.List;
 
 import provided.FunctionSignature;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 public class FunctionCallNode implements OperandNode {
 
@@ -142,21 +144,6 @@ public class FunctionCallNode implements OperandNode {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return convertToJott();
-	}
-
-	@Override
-	public String convertToC() {
-		return convertToJott();
-	}
-
-	@Override
-	public String convertToPython() {
-		return convertToJott();
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (context.hasError()) {
 			return false;
@@ -165,6 +152,13 @@ public class FunctionCallNode implements OperandNode {
 		FunctionSignature signature = context.functions().get(functionNameToken.getToken());
 		if (signature == null) {
 			context.reportSemanticError("Call to unknown function \"" + functionNameToken.getToken() + "\"", functionNameToken);
+			return false;
+		}
+
+		FunctionSignature currentFunction = context.currentFunction();
+		String callerName = currentFunction == null ? null : currentFunction.getName();
+		if (!context.functions().isDefinedBefore(functionNameToken.getToken(), callerName)) {
+			context.reportSemanticError("Call to function \"" + functionNameToken.getToken() + "\" before its definition", functionNameToken);
 			return false;
 		}
 
@@ -208,5 +202,19 @@ public class FunctionCallNode implements OperandNode {
 	@Override
 	public Token getToken() {
 		return functionNameToken;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	@Override
+	public RuntimeValue evaluate(RuntimeState state) {
+		List<RuntimeValue> evaluatedArgs = new ArrayList<>();
+		for (ExpressionNode arg : arguments) {
+			evaluatedArgs.add(arg.evaluate(state));
+		}
+		return state.callFunction(functionNameToken.getToken(), evaluatedArgs);
 	}
 }

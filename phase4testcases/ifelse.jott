@@ -1,0 +1,13 @@
+Def main[]:Void{
+Integer x;
+x = 4;
+If[x == 5]{
+::print["five"];
+}
+Elseif[x > 3]{
+::print["gt3"];
+}
+Else{
+::print["other"];
+}
+}

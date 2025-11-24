@@ -1,0 +1,8 @@
+Def main[]:Void{
+Integer x;
+x = 0;
+While[x > 0]{
+::print[x];
+x = x - 1;
+}
+}

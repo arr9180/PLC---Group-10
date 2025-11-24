@@ -1,0 +1,10 @@
+Def main[]:Void{
+Double x;
+Double y;
+x = 5.0;
+y = 2.0;
+::print[x + y];
+::print[x - y];
+::print[x * y];
+::print[x / y];
+}

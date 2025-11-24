@@ -1,0 +1,4 @@
+Def main[]:Void{
+::print[::concat["foo","bar"]];
+::print[::length["world"]];
+}

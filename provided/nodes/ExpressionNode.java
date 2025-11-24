@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 
 public class ExpressionNode implements JottTree {
 
@@ -74,21 +76,6 @@ public class ExpressionNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (node instanceof OperandNode) {
 			OperandNode operand = (OperandNode) node;
@@ -114,5 +101,20 @@ public class ExpressionNode implements JottTree {
 
 	public Token getToken() {
 		return firstToken;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	public RuntimeValue evaluate(RuntimeState state) {
+		if (node instanceof OperandNode) {
+			return ((OperandNode) node).evaluate(state);
+		}
+		if (node instanceof BinaryOpNode) {
+			return ((BinaryOpNode) node).evaluate(state);
+		}
+		return RuntimeValue.voidValue();
 	}
 }

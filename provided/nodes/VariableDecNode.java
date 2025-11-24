@@ -83,21 +83,6 @@ public class VariableDecNode implements JottTree {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		if (context.hasError()) {
 			return false;
@@ -139,5 +124,10 @@ public class VariableDecNode implements JottTree {
 		}
 		String lower = name.toLowerCase();
 		return lower.equals("print") || lower.equals("concat") || lower.equals("length");
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
 	}
 }

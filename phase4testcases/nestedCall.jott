@@ -1,0 +1,18 @@
+Def add2[x:Integer,y:Integer]:Integer{
+Return x + y;
+}
+
+Def choose[b:Boolean]:Integer{
+If[b]{
+Return 1;
+}
+Else{
+Return 2;
+}
+}
+
+Def main[]:Void{
+Integer r;
+r = ::add2[::choose[True], ::choose[False]];
+::print[r];
+}

@@ -1,11 +1,15 @@
 package provided.nodes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import provided.FunctionSignature;
 import provided.JottTree;
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 
@@ -47,26 +51,11 @@ public class ProgramNode implements JottTree {
 		return builder.toString();
 	}
 
-	@Override
-	public String convertToJava(String className) {
-		return "";
-	}
-
-	@Override
-	public String convertToC() {
-		return "";
-	}
-
-	@Override
-	public String convertToPython() {
-		return "";
-	}
-
 	private boolean populateFunctionTable(SemanticContext context) {
 		context.functions().reset();
 		FunctionDefNode mainFunction = null;
 
-		// register all functions first
+		int order = 0;
 		for (FunctionDefNode function : functions) {
 			if (context.hasError()) {
 				break;
@@ -75,13 +64,14 @@ public class ProgramNode implements JottTree {
 			if (signature == null) {
 				continue;
 			}
-			if (!context.functions().addUserFunction(signature)) {
+			if (!context.functions().addUserFunction(signature, order)) {
 				context.reportSemanticError("Function \"" + signature.getName() + "\" already defined", function.getNameToken());
 				return false;
 			}
 			if ("main".equals(signature.getName())) {
 				mainFunction = function;
 			}
+			order++;
 		}
 
 		if (context.hasError()) {
@@ -123,5 +113,15 @@ public class ProgramNode implements JottTree {
 		}
 
 		return !context.hasError();
+	}
+
+	@Override
+	public void execute() {
+		Map<String, FunctionDefNode> map = new HashMap<>();
+		for (FunctionDefNode fn : functions) {
+			map.put(fn.getName(), fn);
+		}
+		RuntimeState runtime = new RuntimeState(map);
+		runtime.callFunction("main", Collections.emptyList());
 	}
 }

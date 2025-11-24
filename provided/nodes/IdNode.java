@@ -3,9 +3,11 @@ package provided.nodes;
 import java.util.ArrayList;
 
 import provided.JottType;
+import provided.RuntimeState;
 import provided.SemanticContext;
 import provided.Token;
 import provided.TokenType;
+import provided.RuntimeValue;
 import provided.VariableTable;
 
 public class IdNode implements OperandNode {
@@ -54,21 +56,6 @@ public class IdNode implements OperandNode {
 	}
 
 	@Override
-	public String convertToJava(String className) {
-		return idToken.getToken();
-	}
-
-	@Override
-	public String convertToC() {
-		return idToken.getToken();
-	}
-
-	@Override
-	public String convertToPython() {
-		return idToken.getToken();
-	}
-
-	@Override
 	public boolean validateTree(SemanticContext context) {
 		VariableTable.VariableEntry entry = context.variables().lookup(getName());
 		if (entry == null) {
@@ -93,5 +80,15 @@ public class IdNode implements OperandNode {
 	@Override
 	public Token getToken() {
 		return idToken;
+	}
+
+	@Override
+	public void execute() {
+		throw new UnsupportedOperationException("Execute not implemented yet");
+	}
+
+	@Override
+	public RuntimeValue evaluate(RuntimeState state) {
+		return state.getVar(getName());
 	}
 }
