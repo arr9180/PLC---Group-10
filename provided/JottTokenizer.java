@@ -4,12 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-/**
- * This class is responsible for tokenizing Jott code.
- * 
- * @author Aidan Ryther & ___ & ___ & ___
- * 
- **/
 
 
 public class JottTokenizer {
