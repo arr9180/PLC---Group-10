@@ -11,11 +11,5 @@ This file contains **provided code**, **testers**, and **test cases**.
 `javac provided/**/*.java testers/**/*.java`
 2. Run tokenizer tester:  
 `java testers.JottTokenizerTester`
-3. Run parser tester:     
-`java testers.JottParserTester`
-4. Run main tester:       
-`java testers.JottMainTester`
-5. Run phase 4 tester:
-`java testers.Phase4Tester`
-6. Remove .class files:   
+3. Remove .class files:   
 `./clean.sh`
